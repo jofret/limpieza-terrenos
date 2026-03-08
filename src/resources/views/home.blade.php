@@ -320,6 +320,8 @@
 
                             {{-- Botón --}}
                             <div class="text-center mt-6">
+                                <x-honey recaptcha/>
+                                
                                 <button type="submit" class="bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-800 transition transform hover:scale-105 shadow-lg inline-flex items-center">
                                     Enviar Ahora <i class="fas fa-paper-plane ml-2"></i>
                                 </button>

@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
+    libicu-dev \
     && docker-php-ext-install \
     pdo_mysql \
     mbstring \
@@ -17,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     bcmath \
     gd \
     zip \
-    intl 
+    intl
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
