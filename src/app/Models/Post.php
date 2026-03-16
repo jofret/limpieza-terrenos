@@ -235,4 +235,12 @@ class Post extends Model implements HasMedia
     {
         return $this->getFirstMedia('after');
     }
+
+        /**
+     * Relación con encuestas
+     */
+    public function surveys()
+    {
+        return $this->hasMany(Survey::class);
+    }
 }
