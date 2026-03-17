@@ -5,7 +5,7 @@
 
 @section('content')
     {{-- BANNER PRINCIPAL --}}
-    <section class="relative text-white flex items-center overflow-hidden" style="min-height: calc(100vh - 80px);">
+    <section id="inicio" class="relative text-white flex items-center overflow-hidden" style="min-height: calc(100vh - 80px);">
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=1200" 
                  alt="Terreno con maleza" 
@@ -71,7 +71,7 @@
 
     {{-- Trabajos destacados --}}
     @if($featuredPosts->count() > 0)
-    <section class="py-16 bg-white rounded-xl shadow-sm mb-8">
+    <section id="trabajos" class="py-16 bg-white rounded-xl shadow-sm mb-8">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-12">Trabajos Destacados</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -118,10 +118,10 @@
     @endif
 
     {{-- Servicios --}}
-    <section class="py-16 bg-gray-50 rounded-xl shadow-sm mb-8">
+    <section id="servicios" class="py-16 bg-gray-50 rounded-xl shadow-sm mb-8">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-12">Nuestros Servicios</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center max-w-4xl mx-auto">
                 @foreach($categories as $category)
                 <a href="/{{ $category->slug }}" 
                    class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition card-hover text-center">
@@ -147,7 +147,7 @@
     </section>
 
     {{-- Testimonios --}}
-    <section class="py-16 bg-gradient-to-b from-gray-50 to-white">
+    <section id="testimonios" class="py-16 bg-gradient-to-b from-gray-50 to-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">¿Qué dicen nuestros clientes?</h2>
