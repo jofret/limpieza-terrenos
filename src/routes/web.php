@@ -66,7 +66,9 @@ Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 */
 
 Route::get('/contacto', [ContactController::class, 'show'])->name('contacto');
-Route::post('/contacto/enviar', [ContactController::class, 'send'])->name('contacto.enviar');
+Route::post('/contacto/enviar', [App\Http\Controllers\ContactController::class, 'send'])
+    ->middleware(['honey', 'honey-recaptcha'])
+    ->name('contacto.enviar');
 
 /*
 |--------------------------------------------------------------------------

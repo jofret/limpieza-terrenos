@@ -62,6 +62,44 @@
             overflow: hidden;
         }
     </style>
+
+{{-- Google reCAPTCHA --}}
+@if(config('services.recaptcha.site_key'))
+<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+<script>
+    // Esperar a que el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contact-form');
+        
+        if (form && typeof grecaptcha !== 'undefined') {
+            // Generar token al cargar la página
+            grecaptcha.ready(function() {
+                console.log('✅ reCAPTCHA listo');
+            });
+            
+            // Al enviar el formulario
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'submit'}).then(function(token) {
+                        // Agregar token al formulario
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'honey_recaptcha_token';
+                        input.value = token;
+                        form.appendChild(input);
+                        
+                        // Enviar formulario
+                        form.submit();
+                    });
+                });
+            });
+        }
+    });
+</script>
+@endif
+
 </head>
 <body class="bg-gray-50" x-data="{ mobileMenuOpen: false }">
 

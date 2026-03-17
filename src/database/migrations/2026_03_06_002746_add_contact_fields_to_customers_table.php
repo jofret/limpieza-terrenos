@@ -6,19 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            if (!Schema::hasColumn('posts', 'created_at')) {
-                $table->timestamps();
-            }
+        Schema::table('customers', function (Blueprint $table) {
+            //
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropTimestamps();
+        Schema::table('customers', function (Blueprint $table) {
+            //
         });
     }
 };
