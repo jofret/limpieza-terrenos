@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SurveyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +70,11 @@ Route::get('/contacto', [ContactController::class, 'show'])->name('contacto');
 Route::post('/contacto/enviar', [App\Http\Controllers\ContactController::class, 'send'])
     ->middleware(['honey', 'honey-recaptcha'])
     ->name('contacto.enviar');
+
+
+// Encuestas públicas
+Route::get('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'show'])->name('survey.show');
+Route::post('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'store'])->name('survey.store');
 
 /*
 |--------------------------------------------------------------------------

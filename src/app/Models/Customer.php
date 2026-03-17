@@ -12,11 +12,24 @@ class Customer extends Model
     protected $table = 'customers';
 
     protected $fillable = [
-    'name', 'phone', 'email', 'address', 'zone', 'birthday',
-    'customer_type', 'status', 'preferred_contact', 'notes', 'metadata',
-    // Nuevos campos
-    'zona_principal', 'partido', 'otra_zona', 'servicio_interes',
-    'mensaje_inicial', 'fuente'
+        'name',
+        'phone',
+        'email',
+        'address',
+        'zone',
+        'birthday',
+        'customer_type',
+        'status',
+        'preferred_contact',
+        'notes',
+        'metadata',
+        // Campos del formulario de contacto
+        'zona_principal',
+        'partido',
+        'otra_zona',
+        'servicio_interes',
+        'mensaje_inicial',
+        'fuente',
     ];
 
     protected $casts = [
@@ -24,8 +37,79 @@ class Customer extends Model
         'metadata' => 'array',
     ];
 
+    /**
+     * Relación con propiedades
+     */
     public function properties()
     {
         return $this->hasMany(Property::class);
+    }
+
+    /**
+     * Relación con encuestas
+     */
+    public function surveys()
+    {
+        return $this->hasMany(Survey::class);
+    }
+
+    /**
+     * Relación con posts a través de propiedades
+     */
+    public function posts()
+    {
+        return $this->hasManyThrough(Post::class, Property::class);
+    }
+
+    /**
+     * Accesor para cumpleaños formateado
+     */
+    public function getBirthdayAttribute()
+    {
+        if ($this->birthday_month && $this->birthday_day) {
+            return $this->birthday_day . ' de ' . $this->birthday_month;
+        }
+        return null;
+    }
+
+    /**
+     * Scope para clientes activos
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'activo');
+    }
+
+    /**
+     * Scope para clientes potenciales (leads)
+     */
+    public function scopePotential($query)
+    {
+        return $query->where('status', 'potencial');
+    }
+
+    /**
+     * Scope para filtrar por zona
+     */
+    public function scopeByZone($query, $zone)
+    {
+        return $query->where('zona_principal', $zone)
+                     ->orWhere('otra_zona', 'LIKE', "%{$zone}%");
+    }
+
+    /**
+     * Obtener zona completa formateada
+     */
+    public function getFullZoneAttribute()
+    {
+        if ($this->zona_principal === 'Otra') {
+            return $this->otra_zona;
+        }
+        
+        if ($this->partido) {
+            return $this->zona_principal . ' - ' . $this->partido;
+        }
+        
+        return $this->zona_principal;
     }
 }
