@@ -40,7 +40,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
+
+    {{-- jQuery (necesario para Lightbox2) --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    {{-- Lightbox2 (mesa de luz) --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
     <style>
         html {
             scroll-behavior: smooth;
@@ -66,47 +73,47 @@
         }
     </style>
 
-{{-- Google reCAPTCHA --}}
-@if(config('services.recaptcha.site_key'))
-<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
-<script>
-    // Esperar a que el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('contact-form');
-        
-        if (form && typeof grecaptcha !== 'undefined') {
-            // Generar token al cargar la página
-            grecaptcha.ready(function() {
-                console.log('✅ reCAPTCHA listo');
-            });
+    {{-- Google reCAPTCHA --}}
+    @if(config('services.recaptcha.site_key'))
+    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+    <script>
+        // Esperar a que el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contact-form');
             
-            // Al enviar el formulario
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
+            if (form && typeof grecaptcha !== 'undefined') {
+                // Generar token al cargar la página
                 grecaptcha.ready(function() {
-                    grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'submit'}).then(function(token) {
-                        // Agregar token al formulario
-                        let input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'honey_recaptcha_token';
-                        input.value = token;
-                        form.appendChild(input);
-                        
-                        // Enviar formulario
-                        form.submit();
+                    console.log('✅ reCAPTCHA listo');
+                });
+                
+                // Al enviar el formulario
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    grecaptcha.ready(function() {
+                        grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: 'submit'}).then(function(token) {
+                            // Agregar token al formulario
+                            let input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'honey_recaptcha_token';
+                            input.value = token;
+                            form.appendChild(input);
+                            
+                            // Enviar formulario
+                            form.submit();
+                        });
                     });
                 });
-            });
-        }
-    });
-</script>
-@endif
+            }
+        });
+    </script>
+    @endif
 
 </head>
 <body class="bg-gray-50" x-data="{ mobileMenuOpen: false }">
 
-    {{-- Header --}}
+    {{-- Header (igual) --}}
     <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
@@ -167,7 +174,7 @@
         @yield('content')
     </main>
 
-    {{-- Footer --}}
+    {{-- Footer (igual) --}}
     <footer class="bg-gray-900 text-white mt-16">
         <div class="container mx-auto px-4 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -244,6 +251,7 @@
             </div>
         </div>
     </footer>
+
     {{-- Datos estructurados JSON-LD --}}
     @stack('schema')
 </body>
