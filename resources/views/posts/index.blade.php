@@ -53,45 +53,54 @@
     @endif
 @endsection
 
+@php
+    $collectionPage = [
+        "@context" => "https://schema.org",
+        "@type" => "CollectionPage",
+        "name" => "Todos los trabajos de limpieza de terrenos",
+        "description" => "Galería completa de trabajos de limpieza y desmalezado realizados en zona norte y Gran Buenos Aires",
+        "url" => url()->current(),
+        "mainEntity" => [
+            "@type" => "ItemList",
+            "itemListElement" => []
+        ]
+    ];
+
+    foreach ($posts as $index => $post) {
+        $position = $index + 1 + (($posts->currentPage() - 1) * $posts->perPage());
+        $collectionPage['mainEntity']['itemListElement'][] = [
+            "@type" => "ListItem",
+            "position" => $position,
+            "url" => url('/' . $post->category->slug . '/' . $post->slug),
+            "name" => $post->title
+        ];
+    }
+
+    $breadcrumbList = [
+        "@context" => "https://schema.org",
+        "@type" => "BreadcrumbList",
+        "itemListElement" => [
+            [
+                "@type" => "ListItem",
+                "position" => 1,
+                "name" => "Inicio",
+                "item" => url('/')
+            ],
+            [
+                "@type" => "ListItem",
+                "position" => 2,
+                "name" => "Todos los trabajos",
+                "item" => url()->current()
+            ]
+        ]
+    ];
+@endphp
+
 @push('schema')
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Todos los trabajos de limpieza de terrenos",
-    "description": "Galería completa de trabajos de limpieza y desmalezado realizados en zona norte y Gran Buenos Aires",
-    "url": "{{ url()->current() }}",
-    "mainEntity": {
-        "@type": "ItemList",
-        "itemListElement": [
-            @foreach($posts as $index => $post)
-            {
-                "@type": "ListItem",
-                "position": {{ $index + 1 + (($posts->currentPage() - 1) * $posts->perPage()) }},
-                "url": "{{ url('/' . $post->category->slug . '/' . $post->slug) }}",
-                "name": "{{ $post->title }}"
-            }@if(!$loop->last),@endif
-            @endforeach
-        ]
-    }
-}
+{!! json_encode($collectionPage, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
-
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Inicio",
-        "item": "{{ url('/') }}"
-    },{
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Todos los trabajos",
-        "item": "{{ url()->current() }}"
-    }]
-}
+{!! json_encode($breadcrumbList, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endpush

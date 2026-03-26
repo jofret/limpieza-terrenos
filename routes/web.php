@@ -29,28 +29,12 @@ Route::prefix('tag')->name('tag.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rutas semánticas (sin /categoria) - URLs limpias
-|--------------------------------------------------------------------------
-| Estructura: /desmalezado
-|           /desmalezado/terreno-en-pilar
-*/
-Route::get('/{category:slug}', [CategoryController::class, 'show'])->name('category.show');
-Route::get('/{category:slug}/{post:slug}', [PostController::class, 'show'])->name('post.show');
-
-/*
-|--------------------------------------------------------------------------
-| Páginas estáticas
+| Páginas estáticas (deben ir ANTES de las rutas dinámicas)
 |--------------------------------------------------------------------------
 */
 Route::view('/servicios', 'pages.services')->name('servicios');
 Route::view('/contacto', 'pages.contact')->name('contacto');
 Route::view('/presupuesto', 'pages.quote')->name('presupuesto');
-
-/*
-|--------------------------------------------------------------------------
-| Listado general de posts
-|--------------------------------------------------------------------------
-*/
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 
 /*
@@ -66,6 +50,16 @@ Route::post('/contacto/enviar', [App\Http\Controllers\ContactController::class, 
 // Encuestas públicas
 Route::get('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'show'])->name('survey.show');
 Route::post('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'store'])->name('survey.store');
+
+/*
+|--------------------------------------------------------------------------
+| Rutas semánticas (sin /categoria) - URLs limpias
+|--------------------------------------------------------------------------
+| Estructura: /desmalezado
+|           /desmalezado/terreno-en-pilar
+*/
+Route::get('/{category:slug}', [CategoryController::class, 'show'])->name('category.show');
+Route::get('/{category:slug}/{post:slug}', [PostController::class, 'show'])->name('post.show');
 
 /*
 |--------------------------------------------------------------------------
