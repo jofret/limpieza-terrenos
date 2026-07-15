@@ -287,7 +287,7 @@
             "@context" => "https://schema.org",
             "@type" => "LocalBusiness",
             "name" => "Limpieza de Terrenos",
-            "image" => asset('images/logo.jpg'),
+            "image" => asset('images/og-default.jpg'),
             "telephone" => "+54 11 7178-9529",
             "email" => "info@serviciodejardineria.com.ar",
             "address" => [
