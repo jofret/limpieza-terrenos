@@ -2,6 +2,12 @@
 
 @section('meta_title', 'Todos los trabajos - Limpieza de Terrenos')
 @section('meta_description', 'Limpieza y Desmalezado de terrenos WhatsApp ✅ 11 7178 9529 | Galería completa de trabajos de limpieza y desmalezado realizados en zona norte. Antes y después reales. | Tags: desmalezado, limpieza, terrenos, maquinaria, zona norte, pilar, escobar, campos')
+@section('meta_keywords', 'trabajos de limpieza de terrenos, desmalezado, roza, zona norte, galería de trabajos, antes y después')
+
+{{-- Con búsqueda, filtro de categoría o páginas siguientes se duplica el contenido de /posts o de /{categoria}, así que no deben indexarse --}}
+@if(request('search') || request('category') || $posts->currentPage() > 1)
+    @section('meta_robots', 'noindex, follow')
+@endif
 
 @section('content')
     <section class="bg-green-700 text-white rounded-lg p-8 mb-8">

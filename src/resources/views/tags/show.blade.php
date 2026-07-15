@@ -2,6 +2,12 @@
 
 @section('meta_title', $metaTitle ?? 'Posts etiquetados con ' . $tag->name)
 @section('meta_description', 'Limpieza y Desmalezado de terrenos WhatsApp ✅ 11 7178 9529 | Trabajos etiquetados con ' . $tag->name . ' en zona norte. | Tags: ' . $tag->name . ', desmalezado, limpieza, zona norte, terrenos')
+@section('meta_keywords', strtolower($tag->name) . ', limpieza de terrenos, desmalezado, zona norte, terrenos')
+
+{{-- Las páginas siguientes de un tag duplican contenido ya indexado en la página 1 --}}
+@if($posts->currentPage() > 1)
+    @section('meta_robots', 'noindex, follow')
+@endif
 
 @section('content')
     <section class="bg-green-700 text-white rounded-lg p-8 mb-8">

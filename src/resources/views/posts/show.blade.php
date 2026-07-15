@@ -2,6 +2,11 @@
 
 @section('meta_title', $post->meta_title ?? $post->title)
 @section('meta_description', 'Limpieza y Desmalezado de terrenos WhatsApp ✅ 11 7178 9529 | ' . strip_tags($post->excerpt ?? Str::limit($post->content, 150)))
+@section('meta_keywords', collect([$post->category->name, 'limpieza de terrenos', 'desmalezado', 'zona norte'])
+    ->merge($post->tags->pluck('name'))
+    ->merge($post->location ? [$post->location] : [])
+    ->unique(fn ($term) => strtolower(trim($term)))
+    ->implode(', '))
 
 @php
     $featuredMedia = $post->getFirstMedia('featured');
