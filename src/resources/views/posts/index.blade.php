@@ -31,10 +31,17 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @foreach($posts as $post)
         <a href="/{{ $post->category->slug }}/{{ $post->slug }}" class="bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden group">
-            @if($post->getFirstMediaUrl('featured', 'thumb'))
-            <img src="{{ $post->getFirstMediaUrl('featured', 'thumb') }}" alt="{{ $post->title }}" class="w-full h-48 object-cover group-hover:scale-105 transition">
+            {{-- Imagen destacada optimizada (prioriza WebP) --}}
+            @if($post->featured_image)
+                <img src="{{ Storage::url($post->featured_image) }}" 
+                     alt="{{ $post->title }}" 
+                     class="w-full h-48 object-cover group-hover:scale-105 transition">
+            @elseif($post->gallery_images && count($post->gallery_images) > 0)
+                <img src="{{ Storage::url($post->gallery_images[0]) }}" 
+                     alt="{{ $post->title }}" 
+                     class="w-full h-48 object-cover group-hover:scale-105 transition">
             @else
-            <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">📸 Sin imagen</div>
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">📸 Sin imagen</div>
             @endif
             
             <div class="p-4">
@@ -53,45 +60,54 @@
     @endif
 @endsection
 
+@php
+    $collectionPage = [
+        "@context" => "https://schema.org",
+        "@type" => "CollectionPage",
+        "name" => "Todos los trabajos de limpieza de terrenos",
+        "description" => "Galería completa de trabajos de limpieza y desmalezado realizados en zona norte y Gran Buenos Aires",
+        "url" => url()->current(),
+        "mainEntity" => [
+            "@type" => "ItemList",
+            "itemListElement" => []
+        ]
+    ];
+
+    foreach ($posts as $index => $post) {
+        $position = $index + 1 + (($posts->currentPage() - 1) * $posts->perPage());
+        $collectionPage['mainEntity']['itemListElement'][] = [
+            "@type" => "ListItem",
+            "position" => $position,
+            "url" => url('/' . $post->category->slug . '/' . $post->slug),
+            "name" => $post->title
+        ];
+    }
+
+    $breadcrumbList = [
+        "@context" => "https://schema.org",
+        "@type" => "BreadcrumbList",
+        "itemListElement" => [
+            [
+                "@type" => "ListItem",
+                "position" => 1,
+                "name" => "Inicio",
+                "item" => url('/')
+            ],
+            [
+                "@type" => "ListItem",
+                "position" => 2,
+                "name" => "Todos los trabajos",
+                "item" => url()->current()
+            ]
+        ]
+    ];
+@endphp
+
 @push('schema')
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Todos los trabajos de limpieza de terrenos",
-    "description": "Galería completa de trabajos de limpieza y desmalezado realizados en zona norte y Gran Buenos Aires",
-    "url": "{{ url()->current() }}",
-    "mainEntity": {
-        "@type": "ItemList",
-        "itemListElement": [
-            @foreach($posts as $index => $post)
-            {
-                "@type": "ListItem",
-                "position": {{ $index + 1 + (($posts->currentPage() - 1) * $posts->perPage()) }},
-                "url": "{{ url('/' . $post->category->slug . '/' . $post->slug) }}",
-                "name": "{{ $post->title }}"
-            }@if(!$loop->last),@endif
-            @endforeach
-        ]
-    }
-}
+{!! json_encode($collectionPage, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
-
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Inicio",
-        "item": "{{ url('/') }}"
-    },{
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Todos los trabajos",
-        "item": "{{ url()->current() }}"
-    }]
-}
+{!! json_encode($breadcrumbList, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endpush

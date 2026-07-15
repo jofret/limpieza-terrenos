@@ -37,3 +37,6 @@ composer.lock
 # NPM
 package-lock.json
 yarn.lock
+
+# Backups locales de producción (no versionar, contienen dumps reales de DB)
+/backups-produccion/

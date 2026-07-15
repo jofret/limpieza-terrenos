@@ -18,10 +18,12 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @foreach($posts as $post)
         <a href="/{{ $category->slug }}/{{ $post->slug }}" class="bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden group">
-            @if($post->getFirstMediaUrl('featured', 'thumb'))
-            <img src="{{ $post->getFirstMediaUrl('featured', 'thumb') }}" alt="{{ $post->title }}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+            @if($post->featured_image)
+                <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+            @elseif($post->gallery_images && count($post->gallery_images) > 0)
+                <img src="{{ Storage::url($post->gallery_images[0]) }}" alt="{{ $post->title }}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
             @else
-            <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">📸 Sin imagen</div>
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">📸 Sin imagen</div>
             @endif
             
             <div class="p-4">
@@ -43,44 +45,56 @@
     @endif
 @endsection
 
+
+@php
+    // Datos estructurados para CollectionPage (lista de posts)
+    $collectionSchema = [
+        "@context" => "https://schema.org",
+        "@type" => "CollectionPage",
+        "name" => $category->name,
+        "description" => $category->description ?? 'Trabajos de ' . $category->name,
+        "url" => url()->current(),
+        "mainEntity" => [
+            "@type" => "ItemList",
+            "itemListElement" => []
+        ]
+    ];
+
+    // Agregar cada post como elemento de la lista
+    foreach ($posts as $index => $post) {
+        $collectionSchema["mainEntity"]["itemListElement"][] = [
+            "@type" => "ListItem",
+            "position" => $index + 1,
+            "url" => url('/' . $category->slug . '/' . $post->slug)
+        ];
+    }
+
+    // Datos estructurados para BreadcrumbList
+    $breadcrumbSchema = [
+        "@context" => "https://schema.org",
+        "@type" => "BreadcrumbList",
+        "itemListElement" => [
+            [
+                "@type" => "ListItem",
+                "position" => 1,
+                "name" => "Inicio",
+                "item" => url('/')
+            ],
+            [
+                "@type" => "ListItem",
+                "position" => 2,
+                "name" => $category->name,
+                "item" => url()->current()
+            ]
+        ]
+    ];
+@endphp
+
 @push('schema')
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "{{ $category->name }}",
-    "description": "{{ $category->description ?? 'Trabajos de ' . $category->name }}",
-    "url": "{{ url()->current() }}",
-    "mainEntity": {
-        "@type": "ItemList",
-        "itemListElement": [
-            @foreach($posts as $index => $post)
-            {
-                "@type": "ListItem",
-                "position": {{ $index + 1 }},
-                "url": "{{ url('/' . $category->slug . '/' . $post->slug) }}"
-            }@if(!$loop->last),@endif
-            @endforeach
-        ]
-    }
-}
+{!! json_encode($collectionSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
-
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Inicio",
-        "item": "{{ url('/') }}"
-    },{
-        "@type": "ListItem",
-        "position": 2,
-        "name": "{{ $category->name }}",
-        "item": "{{ url()->current() }}"
-    }]
-}
+{!! json_encode($breadcrumbSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endpush

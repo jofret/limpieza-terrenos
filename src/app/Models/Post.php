@@ -74,50 +74,57 @@ class Post extends Model implements HasMedia
     }
 
     /**
+     * Relación con propiedades (muchos a muchos, inversa de Property::posts())
+     */
+    public function properties()
+    {
+        return $this->belongsToMany(Property::class, 'property_post')
+                    ->withPivot('relation_type', 'comment', 'rating', 'service_date')
+                    ->withTimestamps();
+    }
+
+    /**
      * Colecciones de imágenes para Spatie Media Library
      */
     public function registerMediaCollections(): void
     {
         // Imagen destacada (una sola)
         $this->addMediaCollection('featured')
-            ->singleFile()
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('thumb')
-                    ->width(368)
-                    ->height(232)
-                    ->sharpen(10);
-                    
-                $this->addMediaConversion('og-image')
-                    ->width(1200)
-                    ->height(630)
-                    ->sharpen(5);
-            });
-        
+            ->singleFile();
+
         // Galería de imágenes (múltiples, para antes/después)
-        $this->addMediaCollection('gallery')
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('thumb')
-                    ->width(300)
-                    ->height(200);
-            });
+        $this->addMediaCollection('gallery');
 
         // Imágenes de "antes" (opcional)
         $this->addMediaCollection('before')
-            ->singleFile()
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('thumb')
-                    ->width(300)
-                    ->height(200);
-            });
+            ->singleFile();
 
         // Imágenes de "después" (opcional)
         $this->addMediaCollection('after')
-            ->singleFile()
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('thumb')
-                    ->width(300)
-                    ->height(200);
-            });
+            ->singleFile();
+    }
+
+    /**
+     * Conversiones globales para todas las imágenes del modelo
+     */
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+             ->width(368)
+             ->height(232)
+             ->sharpen(10)
+             ->nonQueued();
+
+        $this->addMediaConversion('og-image')
+             ->width(1200)
+             ->height(630)
+             ->sharpen(5)
+             ->nonQueued();
+
+        $this->addMediaConversion('webp')
+             ->format('webp')
+             ->quality(80)
+             ->nonQueued();
     }
 
     /**
@@ -177,11 +184,11 @@ class Post extends Model implements HasMedia
         if ($value) {
             return $value;
         }
-        
+
         if ($this->excerpt) {
             return $this->excerpt;
         }
-        
+
         return "Trabajo de limpieza en {$this->location}. Ver fotos antes/después y solicitar presupuesto.";
     }
 
@@ -190,17 +197,23 @@ class Post extends Model implements HasMedia
      */
     public function getHasBeforeAfterMediaAttribute(): bool
     {
-        return $this->getMedia('before')->isNotEmpty() && 
+        return $this->getMedia('before')->isNotEmpty() &&
                $this->getMedia('after')->isNotEmpty();
     }
 
     /**
-     * Obtener URL de la imagen destacada
+     * Obtener URL de la imagen destacada (versión optimizada)
      */
     public function getFeaturedImageUrlAttribute()
     {
         $media = $this->getFirstMedia('featured');
-        return $media ? $media->getUrl() : asset('images/default-post.jpg');
+        if ($media) {
+            // Priorizar WebP si existe
+            return $media->hasGeneratedConversion('webp')
+                ? $media->getUrl('webp')
+                : $media->getUrl();
+        }
+        return asset('images/default-post.jpg');
     }
 
     /**
@@ -209,7 +222,10 @@ class Post extends Model implements HasMedia
     public function getFeaturedThumbUrlAttribute()
     {
         $media = $this->getFirstMedia('featured');
-        return $media ? $media->getUrl('thumb') : asset('images/default-thumb.jpg');
+        if ($media && $media->hasGeneratedConversion('thumb')) {
+            return $media->getUrl('thumb');
+        }
+        return asset('images/default-thumb.jpg');
     }
 
     /**

@@ -133,6 +133,17 @@ class CustomerResource extends Resource
                     ->label('Propiedades')
                     ->counts('properties')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('testimonial_status')
+                    ->label('Testimonio')
+                    ->badge()
+                    ->getStateUsing(fn (Customer $record): string => $record->testimonialStatusLabel())
+                    ->color(fn (string $state): string => match ($state) {
+                        'No enviado' => 'gray',
+                        'Enlace enviado' => 'warning',
+                        'Completado' => 'info',
+                        'Publicado' => 'success',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Registrado')
                     ->dateTime('d/m/Y')
@@ -160,6 +171,66 @@ class CustomerResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                // Botón para enviar encuesta por WhatsApp
+                Tables\Actions\Action::make('sendSurvey')
+                    ->label('📱 Encuesta WhatsApp')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->color('success')
+                    ->visible(fn (Customer $record): bool => $record->canRequestTestimonial())
+                    ->requiresConfirmation()
+                    ->modalHeading('Enviar encuesta por WhatsApp')
+                    ->modalDescription('Se enviará un enlace al cliente para que complete su opinión. Los datos del cliente se precargarán automáticamente.')
+                    ->modalSubmitActionLabel('Enviar ahora')
+                    ->action(function ($record) {
+                        // Generar token único
+                        $token = md5($record->id . time() . rand(1000, 9999));
+                        
+                        // Crear la encuesta
+                        $survey = \App\Models\Survey::create([
+                            'customer_id' => $record->id,
+                            'token' => $token,
+                            'sent_at' => now(),
+                            'comment' => '',
+                        ]);
+                        
+                        // Crear el enlace
+                        $enlace = url('/encuesta/' . $token);
+                        
+                        // Preparar número de teléfono
+                        $telefono = preg_replace('/[^0-9]/', '', $record->phone);
+                        
+                        // Formato para Argentina
+                        if (substr($telefono, 0, 1) == '0') {
+                            $telefono = '54' . substr($telefono, 1);
+                        } elseif (substr($telefono, 0, 2) != '54') {
+                            $telefono = '54' . $telefono;
+                        }
+                        
+                        // Mensaje personalizado
+                        $mensaje = "Hola {$record->name}! 👋\n\n";
+                        $mensaje .= "Gracias por confiar en *Limpieza de Terrenos*. Queremos conocer tu opinión sobre el servicio que recibiste.\n\n";
+                        $mensaje .= "📝 Por favor, completá esta breve encuesta:\n";
+                        $mensaje .= $enlace . "\n\n";
+                        $mensaje .= "¡Tu opinión nos ayuda a mejorar! 🌿";
+                        
+                        // Codificar mensaje
+                        $mensajeCodificado = urlencode($mensaje);
+
+                        // Crear enlace de WhatsApp: se usa api.whatsapp.com/send directo en vez de
+                        // wa.me, porque el acortador wa.me corrompe emojis (4 bytes UTF-8) en su
+                        // propio redirect hacia api.whatsapp.com.
+                        $whatsappLink = "https://api.whatsapp.com/send/?phone={$telefono}&text={$mensajeCodificado}&type=phone_number&app_absent=0";
+                        
+                        // Notificación en el panel
+                        \Filament\Notifications\Notification::make()
+                            ->title('✅ Enlace generado')
+                            ->body("Hacé clic para enviar por WhatsApp")
+                            ->success()
+                            ->send();
+                        
+                        // Abrir WhatsApp en una nueva pestaña
+                        return redirect($whatsappLink);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
