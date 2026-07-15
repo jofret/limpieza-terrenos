@@ -30,8 +30,8 @@ class SitemapController extends Controller
             );
         }
 
-        // Categorías
-        Category::all()->each(function (Category $category) use ($sitemap) {
+        // Categorías (solo activas)
+        Category::active()->get()->each(function (Category $category) use ($sitemap) {
             $sitemap->add(
                 Url::create("/{$category->slug}")
                     ->setLastModificationDate($category->updated_at)

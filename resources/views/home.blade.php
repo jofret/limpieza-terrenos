@@ -2,6 +2,7 @@
 
 @section('meta_title', 'Limpieza y Desmalezado de Terrenos en Zona Norte')
 @section('meta_description', 'Limpieza y Desmalezado de terrenos WhatsApp ✅ 11 7178 9529 | Servicio profesional en zona norte y Gran Buenos Aires. Respuesta rápida, presupuesto sin cargo. | Tags: desmalezado, limpieza, roza, pilar, escobar, campos, terrenos, maquinaria')
+@section('meta_keywords', 'limpieza de terrenos, desmalezado, roza de campos, zona norte, desmalezado pilar, limpieza escobar, presupuesto desmalezado, prevención de incendios')
 
 @section('content')
     {{-- BANNER PRINCIPAL (sin lazy loading, es LCP) --}}

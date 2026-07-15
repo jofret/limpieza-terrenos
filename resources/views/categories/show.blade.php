@@ -2,6 +2,37 @@
 
 @section('meta_title', $metaTitle ?? $category->name . ' - Limpieza de Terrenos')
 @section('meta_description', 'Limpieza y Desmalezado de terrenos WhatsApp ✅ 11 7178 9529 | ' . ($category->description ?? 'Trabajos de ' . $category->name . ' realizados en zona norte con fotos antes/después.') . ' | Tags: ' . $category->name . ', desmalezado, limpieza, zona norte, terrenos')
+@section('meta_keywords', collect([strtolower($category->name), 'limpieza de terrenos', 'desmalezado', 'zona norte', strtolower($category->name) . ' pilar', strtolower($category->name) . ' escobar'])->unique()->implode(', '))
+
+{{-- Las páginas siguientes de una categoría duplican contenido ya indexado en la página 1 --}}
+@if($posts->currentPage() > 1)
+    @section('meta_robots', 'noindex, follow')
+@endif
+
+@php
+    // Preguntas frecuentes por servicio real (no aplica a categorías de blog como Precios, Legal, Consejos, etc.)
+    $serviceFaqs = [
+        'desmalezado-de-terrenos' => [
+            ['q' => '¿Qué es el desmalezado y cuándo es necesario?', 'a' => 'El desmalezado consiste en cortar y retirar la maleza, pastizales altos y arbustos de un terreno. Es necesario cuando el terreno está descuidado, antes de una construcción, o para cumplir con ordenanzas municipales de prevención de incendios.'],
+            ['q' => '¿Cada cuánto tiempo hay que desmalezar un terreno?', 'a' => 'En zona norte y Gran Buenos Aires, con el clima húmedo, se recomienda desmalezar cada 2 o 3 meses en primavera-verano, y cada 4 a 6 meses en otoño-invierno, para evitar multas y mantener el terreno en condiciones.'],
+            ['q' => '¿Trabajan con maquinaria propia?', 'a' => 'Sí, contamos con maquinaria propia (desmalezadoras, motoguadañas y equipos pesados según el tamaño del terreno) para resolver el trabajo en el menor tiempo posible.'],
+            ['q' => '¿Cuánto cuesta el desmalezado de un terreno?', 'a' => 'El costo depende del tamaño del terreno, el tipo de maleza y el acceso al lugar. Escribinos por WhatsApp al 11 7178-9529 y te pasamos un presupuesto sin cargo.'],
+        ],
+        'limpieza-de-terrenos' => [
+            ['q' => '¿Qué incluye el servicio de limpieza de terrenos?', 'a' => 'Incluye el corte de maleza, retiro de escombros y residuos, poda de arbustos bajos y dejar el terreno listo para uso, venta o construcción.'],
+            ['q' => '¿Cuánto tiempo tarda la limpieza de un terreno?', 'a' => 'Un terreno urbano estándar se resuelve en el mismo día. Terrenos grandes o muy descuidados pueden llevar de 1 a 3 días según la superficie y la cantidad de maquinaria necesaria.'],
+            ['q' => '¿Retiran los residuos y escombros?', 'a' => 'Sí, el retiro de ramas, malezas y escombros generados durante la limpieza está incluido en el servicio.'],
+            ['q' => '¿Hacen limpieza previa a la construcción?', 'a' => 'Sí, es uno de los servicios más solicitados: dejamos el terreno despejado y nivelado para que puedas empezar la obra sin demoras.'],
+        ],
+        'poda-de-altura' => [
+            ['q' => '¿Qué es la poda de altura y cuándo se necesita?', 'a' => 'Es la poda de árboles grandes o de difícil acceso, que requiere equipo especializado y trabajo en altura. Se recomienda cuando hay ramas secas, riesgo de caída, o el árbol interfiere con cables o construcciones.'],
+            ['q' => '¿Trabajan con árboles muy altos o de difícil acceso?', 'a' => 'Sí, contamos con el equipamiento y la experiencia necesaria para podar árboles de gran altura de forma segura, incluso en espacios reducidos.'],
+            ['q' => '¿Retiran las ramas y restos de la poda?', 'a' => 'Sí, el retiro y traslado de las ramas cortadas está incluido en el servicio, dejando el lugar limpio.'],
+            ['q' => '¿Cuánto cuesta la poda de altura de un árbol?', 'a' => 'Depende de la altura del árbol, su ubicación y el acceso al lugar. Escribinos por WhatsApp al 11 7178-9529 y te pasamos un presupuesto sin cargo.'],
+        ],
+    ];
+    $categoryFaqs = $serviceFaqs[$category->slug] ?? null;
+@endphp
 
 @section('content')
     <section class="bg-green-700 text-white rounded-lg p-8 mb-8">
@@ -42,6 +73,20 @@
     <div class="mt-8">{{ $posts->links() }}</div>
     @else
     <div class="text-center py-12 bg-white rounded-lg"><p class="text-gray-500">No hay trabajos publicados en esta categoría aún.</p></div>
+    @endif
+
+    @if($categoryFaqs)
+    <section class="mt-12">
+        <h2 class="text-2xl font-bold mb-6 text-green-800">Preguntas frecuentes sobre {{ strtolower($category->name) }}</h2>
+        <div class="space-y-4">
+            @foreach($categoryFaqs as $faq)
+            <details class="bg-white rounded-lg shadow p-4">
+                <summary class="font-semibold cursor-pointer text-gray-800">{{ $faq['q'] }}</summary>
+                <p class="text-gray-600 mt-2">{{ $faq['a'] }}</p>
+            </details>
+            @endforeach
+        </div>
+    </section>
     @endif
 @endsection
 
@@ -88,6 +133,49 @@
             ]
         ]
     ];
+
+    // Datos estructurados para Service (solo en categorías que son servicios reales, no temas de blog)
+    if ($categoryFaqs) {
+        $serviceSchema = [
+            "@context" => "https://schema.org",
+            "@type" => "Service",
+            "serviceType" => $category->name,
+            "name" => $category->name . ' - Limpieza y Desmalezado de Terrenos',
+            "description" => $category->description ?? 'Servicio profesional de ' . strtolower($category->name) . ' en zona norte y Gran Buenos Aires.',
+            "url" => url()->current(),
+            "provider" => [
+                "@type" => "LocalBusiness",
+                "name" => "Limpieza de Terrenos",
+                "telephone" => "+54 11 7178-9529",
+                "image" => asset('images/og-default.jpg'),
+                "address" => [
+                    "@type" => "PostalAddress",
+                    "addressLocality" => "Buenos Aires",
+                    "addressRegion" => "Buenos Aires",
+                    "addressCountry" => "AR"
+                ]
+            ],
+            "areaServed" => ["CABA", "Zona Norte", "Gran Buenos Aires"]
+        ];
+    }
+
+    // Datos estructurados para FAQPage (misma lista que se muestra visible en la página)
+    if ($categoryFaqs) {
+        $faqSchema = [
+            "@context" => "https://schema.org",
+            "@type" => "FAQPage",
+            "mainEntity" => array_map(function ($faq) {
+                return [
+                    "@type" => "Question",
+                    "name" => $faq['q'],
+                    "acceptedAnswer" => [
+                        "@type" => "Answer",
+                        "text" => $faq['a']
+                    ]
+                ];
+            }, $categoryFaqs)
+        ];
+    }
 @endphp
 
 @push('schema')
@@ -97,4 +185,12 @@
 <script type="application/ld+json">
 {!! json_encode($breadcrumbSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
+@if($categoryFaqs)
+<script type="application/ld+json">
+{!! json_encode($serviceSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode($faqSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+@endif
 @endpush
