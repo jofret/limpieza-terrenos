@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /livewire
 Disallow: /filament
 
-Sitemap: http://localhost:8080/sitemap.xml
+Sitemap: https://limpieza-y-desmalezado-de-terrenos.com.ar/sitemap.xml
