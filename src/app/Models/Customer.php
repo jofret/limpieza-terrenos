@@ -20,6 +20,7 @@ class Customer extends Model
         'birthday',
         'customer_type',
         'status',
+        'lead_status',
         'preferred_contact',
         'notes',
         'metadata',
