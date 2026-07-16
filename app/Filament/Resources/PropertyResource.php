@@ -234,6 +234,7 @@ class PropertyResource extends Resource
     {
         return [
             RelationManagers\PostsRelationManager::class,
+            RelationManagers\ServiceOrdersRelationManager::class,
         ];
     }
 

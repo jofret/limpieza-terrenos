@@ -43,4 +43,9 @@ class Property extends Model
                     ->withPivot('relation_type', 'comment', 'rating', 'service_date')
                     ->withTimestamps();
     }
+
+    public function serviceOrders()
+    {
+        return $this->hasMany(ServiceOrder::class);
+    }
 }

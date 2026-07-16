@@ -69,6 +69,18 @@ class CustomerResource extends Resource
                                 'potencial' => 'Potencial',
                             ])
                             ->default('potencial'),
+                        Forms\Components\Select::make('lead_status')
+                            ->label('Etapa del lead')
+                            ->options([
+                                'nuevo' => 'Nuevo',
+                                'contactado' => 'Contactado',
+                                'visitado' => 'Visitado',
+                                'presupuestado' => 'Presupuestado',
+                                'cliente' => 'Cliente',
+                                'descartado' => 'Descartado',
+                            ])
+                            ->default('nuevo')
+                            ->required(),
                         Forms\Components\Select::make('preferred_contact')
                             ->label('Contacto preferido')
                             ->options([
@@ -129,6 +141,26 @@ class CustomerResource extends Resource
                         'inactivo' => 'Inactivo',
                         'potencial' => 'Potencial',
                     ][$state] ?? $state),
+                Tables\Columns\TextColumn::make('lead_status')
+                    ->label('Etapa del lead')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'nuevo' => 'info',
+                        'contactado', 'visitado' => 'warning',
+                        'presupuestado' => 'primary',
+                        'cliente' => 'success',
+                        'descartado' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'nuevo' => 'Nuevo',
+                        'contactado' => 'Contactado',
+                        'visitado' => 'Visitado',
+                        'presupuestado' => 'Presupuestado',
+                        'cliente' => 'Cliente',
+                        'descartado' => 'Descartado',
+                        default => $state,
+                    }),
                 Tables\Columns\TextColumn::make('properties_count')
                     ->label('Propiedades')
                     ->counts('properties')
@@ -156,6 +188,16 @@ class CustomerResource extends Resource
                         'activo' => 'Activo',
                         'inactivo' => 'Inactivo',
                         'potencial' => 'Potencial',
+                    ]),
+                Tables\Filters\SelectFilter::make('lead_status')
+                    ->label('Etapa del lead')
+                    ->options([
+                        'nuevo' => 'Nuevo',
+                        'contactado' => 'Contactado',
+                        'visitado' => 'Visitado',
+                        'presupuestado' => 'Presupuestado',
+                        'cliente' => 'Cliente',
+                        'descartado' => 'Descartado',
                     ]),
                 Tables\Filters\SelectFilter::make('customer_type')
                     ->label('Tipo de cliente')
