@@ -9,6 +9,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Illuminate\Support\Str;
 
 class PostResource extends Resource
@@ -94,12 +96,11 @@ class PostResource extends Resource
 
                 Forms\Components\Section::make('Imágenes')
                     ->schema([
-                        Forms\Components\FileUpload::make('featured_image')
+                        SpatieMediaLibraryFileUpload::make('featured')
+                            ->collection('featured')
                             ->label('Imagen destacada')
                             ->image()
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/jfif', 'image/bmp', 'image/gif'])
-                            ->directory('posts/featured')
-                            ->visibility('public')
                             ->imageEditor()
                             ->imageEditorAspectRatios([
                                 '16:9',
@@ -110,13 +111,12 @@ class PostResource extends Resource
                         Forms\Components\Toggle::make('has_before_after')
                             ->label('Tiene imágenes antes/después')
                             ->default(false),
-                        Forms\Components\FileUpload::make('gallery_images')
+                        SpatieMediaLibraryFileUpload::make('gallery')
+                            ->collection('gallery')
                             ->label('Galería de imágenes')
                             ->multiple()
                             ->image()
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/jfif', 'image/bmp', 'image/gif'])
-                            ->directory('posts/gallery')
-                            ->visibility('public')
                             ->imageEditor()
                             ->reorderable()
                             ->openable()
@@ -170,7 +170,8 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('featured_image')
+                SpatieMediaLibraryImageColumn::make('featured')
+                    ->collection('featured')
                     ->label('Imagen')
                     ->circular()
                     ->size(40),

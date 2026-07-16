@@ -38,13 +38,13 @@
         @foreach($posts as $post)
         <a href="/{{ $post->category->slug }}/{{ $post->slug }}" class="bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden group">
             {{-- Imagen destacada optimizada (prioriza WebP) --}}
-            @if($post->featured_image)
-                <img src="{{ Storage::url($post->featured_image) }}" 
-                     alt="{{ $post->title }}" 
+            @if($post->getFirstMediaUrl('featured', 'thumb'))
+                <img src="{{ $post->getFirstMediaUrl('featured', 'thumb') }}"
+                     alt="{{ $post->title }}"
                      class="w-full h-48 object-cover group-hover:scale-105 transition">
-            @elseif($post->gallery_images && count($post->gallery_images) > 0)
-                <img src="{{ Storage::url($post->gallery_images[0]) }}" 
-                     alt="{{ $post->title }}" 
+            @elseif($post->getFirstMediaUrl('gallery', 'thumb'))
+                <img src="{{ $post->getFirstMediaUrl('gallery', 'thumb') }}"
+                     alt="{{ $post->title }}"
                      class="w-full h-48 object-cover group-hover:scale-105 transition">
             @else
                 <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">📸 Sin imagen</div>
