@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\TagController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SurveyController;
 
@@ -19,13 +18,12 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 /*
 |--------------------------------------------------------------------------
-| Rutas para tags (etiquetas)
+| Tags (etiquetas)
 |--------------------------------------------------------------------------
-| Estructura: /tag/pilar
+| Las URLs de tag se fusionaron con las de categoría en /{slug} (más abajo).
+| Este redirect 301 es compatibilidad por si /tag/{slug} ya estaba indexado.
 */
-Route::prefix('tag')->name('tag.')->group(function () {
-    Route::get('/{tag:slug}', [TagController::class, 'show'])->name('show');
-});
+Route::redirect('/tag/{slug}', '/{slug}', 301);
 
 // Debe ir antes de las rutas dinámicas de abajo
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
@@ -57,10 +55,13 @@ Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'inde
 |--------------------------------------------------------------------------
 | Rutas semánticas (sin /categoria) - URLs limpias
 |--------------------------------------------------------------------------
+| /{slug} sirve tanto categoría como tag (CategoryController resuelve cuál es).
 | Estructura: /desmalezado
 |           /desmalezado/terreno-en-pilar
 */
-Route::get('/{category:slug}', [CategoryController::class, 'show'])->name('category.show');
+Route::get('/{slug}', [CategoryController::class, 'show'])
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('category.show');
 Route::get('/{category:slug}/{post:slug}', [PostController::class, 'show'])->name('post.show');
 
 

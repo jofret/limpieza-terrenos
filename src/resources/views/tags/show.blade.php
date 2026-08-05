@@ -21,7 +21,7 @@
     </section>
 
     @if($posts->count() > 0)
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div id="resultados" class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @foreach($posts as $post)
         <a href="/{{ $post->category->slug }}/{{ $post->slug }}" class="bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden">
             @if($post->getFirstMediaUrl('featured', 'thumb'))<img src="{{ $post->getFirstMediaUrl('featured', 'thumb') }}" alt="{{ $post->title }}" class="w-full h-48 object-cover">@endif
@@ -39,6 +39,9 @@
     @else
     <div class="text-center py-12 bg-white rounded-lg"><p class="text-gray-500">No hay trabajos con esta etiqueta aún.</p></div>
     @endif
+
+    {{-- Búsquedas Populares (categorías + tags combinados) --}}
+    @include('includes.popular-searches')
 @endsection
 
 @php

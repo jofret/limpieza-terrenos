@@ -46,7 +46,7 @@
     </section>
 
     @if($posts->count() > 0)
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div id="resultados" class="grid grid-cols-1 md:grid-cols-3 gap-6">
         @foreach($posts as $post)
         <a href="/{{ $category->slug }}/{{ $post->slug }}" class="bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden group">
             @if($post->getFirstMediaUrl('featured', 'thumb'))
@@ -88,6 +88,9 @@
         </div>
     </section>
     @endif
+
+    {{-- Búsquedas Populares (categorías + tags combinados) --}}
+    @include('includes.popular-searches')
 @endsection
 
 

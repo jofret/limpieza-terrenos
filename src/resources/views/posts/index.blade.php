@@ -16,7 +16,7 @@
     </section>
 
     {{-- Filtros --}}
-    <div class="mb-6 flex flex-wrap gap-4">
+    <div id="resultados" class="mb-6 flex flex-wrap gap-4">
         <select class="border rounded-lg px-4 py-2" onchange="window.location.href = this.value">
             <option value="{{ url('/posts') }}">Todas las categorías</option>
             @foreach($categories as $cat)
@@ -64,6 +64,9 @@
     @else
     <div class="text-center py-12 bg-white rounded-lg"><p class="text-gray-500">No hay trabajos publicados aún.</p></div>
     @endif
+
+    {{-- Búsquedas Populares (categorías + tags combinados) --}}
+    @include('includes.popular-searches')
 @endsection
 
 @php
