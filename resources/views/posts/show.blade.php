@@ -10,7 +10,7 @@
 
 @php
     $featuredMedia = $post->getFirstMedia('featured');
-    $ogImageUrl = $featuredMedia ? ($featuredMedia->getUrl('webp') ?? $featuredMedia->getUrl()) : asset('images/default-og.jpg');
+    $ogImageUrl = $featuredMedia ? ($featuredMedia->getUrl('webp') ?? $featuredMedia->getUrl()) : asset('images/og-default.jpg');
 @endphp
 @section('og_image', $ogImageUrl)
 
@@ -112,7 +112,7 @@
                                 <h3 class="font-semibold mb-2">Etiquetas de este post:</h3>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($post->tags as $tag)
-                                        <a href="/tag/{{ $tag->slug }}" class="bg-gray-200 px-3 py-1 rounded-full text-sm hover:bg-green-600 hover:text-white transition">
+                                        <a href="/{{ $tag->slug }}" class="bg-gray-200 px-3 py-1 rounded-full text-sm hover:bg-green-600 hover:text-white transition">
                                             #{{ $tag->name }}
                                         </a>
                                     @endforeach
@@ -154,21 +154,6 @@
                 </div>
                 @endif
 
-                {{-- Etiquetas populares (igual) --}}
-                @php
-                    $popularTags = App\Models\Tag::withCount('posts')->orderBy('posts_count', 'desc')->limit(10)->get();
-                @endphp
-                @if($popularTags->count() > 0)
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <h3 class="text-xl font-bold mb-4">Etiquetas populares</h3>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($popularTags as $tag)
-                            <a href="/tag/{{ $tag->slug }}" class="bg-gray-100 hover:bg-green-700 hover:text-white px-3 py-1 rounded-full text-sm transition">#{{ $tag->name }}</a>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
-
                 {{-- Últimas publicaciones (igual) --}}
                 @php
                     $recentPosts = App\Models\Post::where('is_published', true)
@@ -198,6 +183,9 @@
 
     {{-- FORMULARIO DE CONTACTO (igual al de home) --}}
     @include('partials.contact-form', ['serviceCategories' => $serviceCategories])
+
+    {{-- Búsquedas Populares (categorías + tags combinados) --}}
+    @include('includes.popular-searches')
 
     {{-- TESTIMONIOS (igual al de home) --}}
     @include('partials.testimonios')
@@ -293,7 +281,7 @@
 
 @php
     $featuredMedia = $post->getFirstMedia('featured');
-    $ogImageUrl = $featuredMedia ? ($featuredMedia->getUrl('webp') ?? $featuredMedia->getUrl()) : asset('images/default-og.jpg');
+    $ogImageUrl = $featuredMedia ? ($featuredMedia->getUrl('webp') ?? $featuredMedia->getUrl()) : asset('images/og-default.jpg');
 
     $blogPosting = [
         "@context" => "https://schema.org",
@@ -313,7 +301,7 @@
             "name" => "Limpieza de Terrenos",
             "logo" => [
                 "@type" => "ImageObject",
-                "url" => asset('images/logo.jpg')
+                "url" => asset('images/og-default.jpg')
             ]
         ],
         "mainEntityOfPage" => [
@@ -346,6 +334,25 @@
             ]
         ]
     ];
+
+    // Refuerza NAP (nombre/dirección/teléfono) también en la página de mayor valor SEO
+    $localBusiness = [
+        "@context" => "https://schema.org",
+        "@type" => "LocalBusiness",
+        "name" => "Limpieza de Terrenos",
+        "image" => asset('images/og-default.jpg'),
+        "telephone" => "+54 11 7178-9529",
+        "email" => "info@serviciodejardineria.com.ar",
+        "address" => [
+            "@type" => "PostalAddress",
+            "addressLocality" => "Buenos Aires",
+            "addressRegion" => "Buenos Aires",
+            "addressCountry" => "AR"
+        ],
+        "openingHours" => "Mo-Sa 08:00-18:00",
+        "priceRange" => "$$",
+        "areaServed" => ["CABA", "Zona Norte", "Gran Buenos Aires"]
+    ];
 @endphp
 
 @push('schema')
@@ -354,5 +361,8 @@
 </script>
 <script type="application/ld+json">
 {!! json_encode($breadcrumbPost, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode($localBusiness, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endpush

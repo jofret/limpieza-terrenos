@@ -31,7 +31,10 @@ class SitemapController extends Controller
         }
 
         // Categorías (solo activas)
-        Category::active()->get()->each(function (Category $category) use ($sitemap) {
+        $categories = Category::active()->get();
+        $categorySlugs = $categories->pluck('slug');
+
+        $categories->each(function (Category $category) use ($sitemap) {
             $sitemap->add(
                 Url::create("/{$category->slug}")
                     ->setLastModificationDate($category->updated_at)
@@ -53,15 +56,20 @@ class SitemapController extends Controller
                 );
             });
 
-        // Tags
-        Tag::all()->each(function (Tag $tag) use ($sitemap) {
-            $sitemap->add(
-                Url::create("/tag/{$tag->slug}")
-                    ->setLastModificationDate($tag->updated_at)
-                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
-                    ->setPriority(0.6)
-            );
-        });
+        // Tags (solo con posts publicados, excluyendo colisión de slug con una categoría)
+        Tag::whereHas('posts', function ($query) {
+            $query->where('is_published', true)->where('published_at', '<=', now());
+        })
+            ->get()
+            ->reject(fn (Tag $tag) => $categorySlugs->contains($tag->slug))
+            ->each(function (Tag $tag) use ($sitemap) {
+                $sitemap->add(
+                    Url::create("/{$tag->slug}")
+                        ->setLastModificationDate($tag->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                        ->setPriority(0.6)
+                );
+            });
 
         return $sitemap->toResponse(request());
     }
