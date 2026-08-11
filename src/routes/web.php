@@ -41,6 +41,18 @@ Route::post('/contacto/enviar', [ContactController::class, 'send'])
 Route::get('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'show'])->name('survey.show');
 Route::post('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'store'])->name('survey.store');
 
+// Conformidad del cliente sobre el trabajo realizado
+Route::get('/conformidad/{token}', [App\Http\Controllers\PublicWorkOrderController::class, 'show'])->name('conformity.show');
+Route::post('/conformidad/{token}/confirmar', [App\Http\Controllers\PublicWorkOrderController::class, 'confirm'])->name('conformity.confirm');
+
+// Presupuesto público (revisión y aceptación por el cliente)
+Route::get('/presupuesto/{token}', [App\Http\Controllers\PublicBudgetController::class, 'show'])->name('budget.show');
+Route::post('/presupuesto/{token}/aceptar', [App\Http\Controllers\PublicBudgetController::class, 'accept'])->name('budget.accept');
+
+// Webhook de WhatsApp (Claudia)
+Route::get('/webhook/whatsapp', [App\Http\Controllers\WhatsAppWebhookController::class, 'verify'])->name('whatsapp.webhook.verify');
+Route::post('/webhook/whatsapp', [App\Http\Controllers\WhatsAppWebhookController::class, 'receive'])->name('whatsapp.webhook.receive');
+
 /*
 |--------------------------------------------------------------------------
 | sitemap

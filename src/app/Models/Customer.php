@@ -39,6 +39,54 @@ class Customer extends Model
     ];
 
     /**
+     * 'name' es NOT NULL en la tabla — cuando Claudia crea el Customer y
+     * WhatsApp no mandó el nombre de perfil del contacto, se usa este
+     * placeholder hasta que el cliente lo diga en la conversación.
+     */
+    public const NOMBRE_PENDIENTE = 'Cliente de WhatsApp';
+
+    public function tieneNombre(): bool
+    {
+        return filled($this->name) && $this->name !== self::NOMBRE_PENDIENTE;
+    }
+
+    /**
+     * Busca un cliente por su número de WhatsApp (wa_id de Meta, ej.
+     * "5491122334455"), comparando solo los últimos 10 dígitos para que
+     * coincida sin importar con qué formato se haya cargado el teléfono.
+     */
+    public static function findByWhatsappNumber(string $waId): ?self
+    {
+        $sufijo = substr(preg_replace('/[^0-9]/', '', $waId), -10);
+
+        return static::query()
+            ->whereRaw("RIGHT(REGEXP_REPLACE(phone, '[^0-9]', ''), 10) = ?", [$sufijo])
+            ->first();
+    }
+
+    public function whatsappConversations()
+    {
+        return $this->hasMany(WhatsappConversation::class);
+    }
+
+    /**
+     * Teléfono normalizado para enlaces de WhatsApp (api.whatsapp.com/send),
+     * con prefijo de país 54 (Argentina).
+     */
+    public function whatsappPhone(): string
+    {
+        $telefono = preg_replace('/[^0-9]/', '', $this->phone ?? '');
+
+        if (substr($telefono, 0, 1) === '0') {
+            $telefono = '54'.substr($telefono, 1);
+        } elseif (substr($telefono, 0, 2) !== '54') {
+            $telefono = '54'.$telefono;
+        }
+
+        return $telefono;
+    }
+
+    /**
      * Relación con propiedades
      */
     public function properties()
