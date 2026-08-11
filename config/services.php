@@ -40,4 +40,19 @@ return [
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
     ],
 
+    'deepseek' => [
+        'key' => env('DEEPSEEK_API_KEY'),
+        'model' => env('DEEPSEEK_MODEL', 'deepseek-v4-flash'),
+        'base_url' => env('DEEPSEEK_BASE_URL', 'https://api.deepseek.com'),
+    ],
+
+    'whatsapp_cloud_api' => [
+        'token' => env('WHATSAPP_CLOUD_API_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_CLOUD_API_PHONE_NUMBER_ID'),
+        'api_version' => env('WHATSAPP_CLOUD_API_VERSION', 'v21.0'),
+        'verify_token' => env('WHATSAPP_CLOUD_API_VERIFY_TOKEN'),
+        'app_secret' => env('WHATSAPP_CLOUD_API_APP_SECRET'),
+        'default_site' => env('WHATSAPP_CLOUD_API_DEFAULT_SITE', 'limpieza-y-desmalezado-de-terrenos.com.ar'),
+    ],
+
 ];

@@ -24,11 +24,31 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'is_admin',
+        'role',
+        'whatsapp',
+        'is_active',
     ];
 
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->is_admin === true;
+    }
+
+    /**
+     * Teléfono normalizado para enlaces de WhatsApp (api.whatsapp.com/send),
+     * con prefijo de país 54 (Argentina).
+     */
+    public function whatsappPhone(): string
+    {
+        $telefono = preg_replace('/[^0-9]/', '', $this->whatsapp ?? '');
+
+        if (substr($telefono, 0, 1) === '0') {
+            $telefono = '54'.substr($telefono, 1);
+        } elseif (substr($telefono, 0, 2) !== '54') {
+            $telefono = '54'.$telefono;
+        }
+
+        return $telefono;
     }
 
     /**
@@ -52,6 +72,7 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 }

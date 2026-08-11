@@ -11,6 +11,18 @@ class Property extends Model
 
     protected $table = 'properties';
 
+    public const PROPERTY_TYPES = [
+        'casa' => 'Casa',
+        'departamento' => 'Departamento',
+        'oficina' => 'Oficina',
+        'empresa' => 'Empresa',
+        'galpon' => 'Galpón',
+        'campo' => 'Campo',
+        'quinta' => 'Quinta',
+        'country' => 'Country',
+        'otro' => 'Otro',
+    ];
+
     protected $fillable = [
         'customer_id', 'name', 'address', 'zone', 'total_area',
         'property_type', 'has_garden', 'garden_areas', 'has_pool', 'pools',
@@ -32,9 +44,19 @@ class Property extends Model
         'has_sport_areas' => 'boolean',
     ];
 
+    public function getDisplayLabelAttribute(): string
+    {
+        return $this->name ?: $this->address ?: 'Propiedad #'.$this->id;
+    }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function relevamientos()
+    {
+        return $this->hasMany(Relevamiento::class);
     }
 
     public function posts()
