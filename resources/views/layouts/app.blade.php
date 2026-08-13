@@ -149,7 +149,7 @@
                     <a href="/#servicios" class="text-gray-700 hover:text-green-700 font-medium transition">Servicios</a>
                     <a href="{{ route('posts.index') }}" class="text-gray-700 hover:text-green-700 font-medium transition">Trabajos</a>
                     <a href="/#contacto-formulario" class="text-gray-700 hover:text-green-700 font-medium transition">Contacto</a>
-                    <a href="https://wa.me/5491171789529?text=Hola%21%20Necesito%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20limpieza%20de%20terrenos"
+                    <a href="https://wa.me/5491171789529?text=Hola%21%20Necesito%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29"
                        target="_blank"
                        class="flex items-center text-green-700 font-bold hover:text-green-800 transition">
                         <i class="fab fa-whatsapp mr-2"></i> 11 7178-9529
@@ -180,7 +180,7 @@
     </header>
 
     {{-- WhatsApp flotante --}}
-    <a href="https://wa.me/5491171789529?text=Hola!%20Necesito%20información%20sobre%20limpieza%20de%20terrenos"
+    <a href="https://wa.me/5491171789529?text=Hola!%20Necesito%20información%20sobre%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29"
        target="_blank"
        class="whatsapp-float bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition transform hover:scale-110">
         <i class="fab fa-whatsapp text-3xl"></i>

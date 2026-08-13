@@ -262,7 +262,7 @@
                 <a href="#contacto-formulario" class="bg-white text-green-800 px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition" aria-label="Enviar consulta por correo">
                     <i class="fas fa-envelope mr-2"></i> Enviar consulta
                 </a>
-                <a href="https://wa.me/5491171789529" target="_blank" class="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-green-700 transition border-2 border-white" aria-label="Contactar por WhatsApp">
+                <a href="https://wa.me/5491171789529?text=Hola%21%20Necesito%20informaci%C3%B3n%20sobre%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29" target="_blank" class="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-green-700 transition border-2 border-white" aria-label="Contactar por WhatsApp">
                     <i class="fab fa-whatsapp mr-2"></i> WhatsApp directo
                 </a>
             </div>
