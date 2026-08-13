@@ -246,7 +246,7 @@
                         </li>
                         <li class="flex items-center">
                             <i class="fab fa-whatsapp text-green-500 w-5 mr-2"></i>
-                            <span class="text-gray-400">11 7178-9529</span>
+                            <a href="https://wa.me/5491164640291?text=Hola%21%20Necesito%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29" target="_blank" class="text-gray-400 hover:text-white transition">WhatsApp</a>
                         </li>
                         <li class="flex items-center">
                             <i class="fas fa-envelope text-green-500 w-5 mr-2"></i>
