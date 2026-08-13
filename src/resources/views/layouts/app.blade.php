@@ -149,10 +149,10 @@
                     <a href="/#servicios" class="text-gray-700 hover:text-green-700 font-medium transition">Servicios</a>
                     <a href="{{ route('posts.index') }}" class="text-gray-700 hover:text-green-700 font-medium transition">Trabajos</a>
                     <a href="/#contacto-formulario" class="text-gray-700 hover:text-green-700 font-medium transition">Contacto</a>
-                    <a href="https://wa.me/5491171789529?text=Hola%21%20Necesito%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29"
+                    <a href="https://wa.me/5491164640291?text=Hola%21%20Necesito%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29"
                        target="_blank"
                        class="flex items-center text-green-700 font-bold hover:text-green-800 transition">
-                        <i class="fab fa-whatsapp mr-2"></i> 11 7178-9529
+                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp
                     </a>
                     <a href="/#contacto-formulario" class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition">
                         Presupuesto
@@ -171,8 +171,8 @@
                 <a href="/#servicios" class="block py-2 px-4 hover:bg-green-50">Servicios</a>
                 <a href="{{ route('posts.index') }}" class="block py-2 px-4 hover:bg-green-50">Trabajos</a>
                 <a href="/#contacto-formulario" class="block py-2 px-4 hover:bg-green-50">Contacto</a>
-                <a href="tel:+541171789529" class="block py-2 px-4 text-green-700 font-bold">
-                    <i class="fas fa-phone-alt mr-2"></i> 11 7178-9529
+                <a href="https://wa.me/5491164640291?text=Hola%21%20Necesito%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29" target="_blank" class="block py-2 px-4 text-green-700 font-bold">
+                    <i class="fab fa-whatsapp mr-2"></i> WhatsApp
                 </a>
                 <a href="/#contacto-formulario" class="block py-2 px-4 bg-green-700 text-white rounded">Presupuesto</a>
             </div>
@@ -180,7 +180,7 @@
     </header>
 
     {{-- WhatsApp flotante --}}
-    <a href="https://wa.me/5491171789529?text=Hola!%20Necesito%20información%20sobre%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29"
+    <a href="https://wa.me/5491164640291?text=Hola!%20Necesito%20información%20sobre%20limpieza%20de%20terrenos%20%28limpieza-y-desmalezado-de-terrenos.com.ar%29"
        target="_blank"
        class="whatsapp-float bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition transform hover:scale-110">
         <i class="fab fa-whatsapp text-3xl"></i>
