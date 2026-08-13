@@ -40,26 +40,48 @@ docker-compose exec php php artisan migrate --seed
 
 ## ☁️ Deploy a producción
 
-El sitio corre en un VPS administrado con Laravel Forge. El deploy es manual: se hace `git pull` en el servidor y se corren los comandos habituales de Laravel — no hay CI/CD ni script de deploy automatizado en este repo.
+El sitio vive en hosting compartido de Hostinger (no Forge), en `~/domains/limpieza-y-desmalezado-de-terrenos.com.ar/`. La estructura tiene una particularidad: este repo es un monorepo (`docker/`, `README.md`, `src/` con el Laravel real adentro), pero el sitio en el servidor espera el contenido de Laravel **en la raíz** de la carpeta `laravel/` — sin la carpeta `src/` de por medio. Por eso `laravel/` en el servidor no clona el repo tal cual: sigue la rama `deploy`, que es una versión aplanada de `src/` generada con `git subtree`.
 
-### Antes de cada deploy con migraciones
+`public_html/` es el document root real (con su propio `index.php` que apunta a `../laravel/`), y `public_html/storage` es un symlink a `laravel/storage/app/public` — eso ya está armado, no hace falta `storage:link` en cada deploy.
 
-1. Backup de las tablas que la migración vaya a tocar:
-   ```bash
-   mysqldump -u <user> -p <db_name> <tabla> > backup_<tabla>_$(date +%Y%m%d).sql
-   ```
-2. Revisar si la migración es aditiva (segura) o modifica columnas de tablas que ya tienen datos en producción — en ese caso, confirmar que la migración incluya un backfill antes de exigir `NOT NULL` o agregar una FK obligatoria.
+El PHP del sistema (`php` en el PATH) es 7.4 — inservible para este proyecto. Hay que usar siempre `/opt/alt/php83/usr/bin/php` explícitamente, tanto para `artisan` como para invocar `composer`.
 
-### Pasos del deploy
+### 1. Regenerar y publicar la rama `deploy` (en tu máquina, antes de tocar el servidor)
+
+Cada vez que haya cambios en `src/` para desplegar:
 
 ```bash
-git pull origin main
-composer install --no-dev --optimize-autoloader
-php artisan migrate --force
-php artisan config:cache && php artisan route:cache && php artisan view:cache
+git branch -D deploy 2>/dev/null
+git subtree split --prefix=src -b deploy
+git push origin deploy --force-with-lease
 ```
 
-Después del deploy, verificar que el sitio responda normal y que el panel de Filament cargue sin errores.
+### 2. Backup en el servidor, antes de migrar
+
+```bash
+mysqldump -u <db_user> -p'<db_pass>' <db_name> | gzip > ~/backups-produccion/limpieza_db_PREDEPLOY_$(date +%Y%m%d).sql.gz
+```
+
+Si la migración modifica una columna/tabla que ya tiene datos en producción (no solo `Schema::create`), confirmar que incluya un backfill antes de exigir `NOT NULL` o agregar una FK obligatoria — no asumir que porque corrió bien en dev va a correr bien en prod con datos reales.
+
+### 3. Deploy en sí (en el servidor, dentro de `laravel/`)
+
+```bash
+PHP=/opt/alt/php83/usr/bin/php
+
+git pull origin deploy
+$PHP /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
+$PHP artisan migrate --force
+$PHP artisan config:clear && $PHP artisan config:cache
+$PHP artisan route:cache
+$PHP artisan view:cache
+```
+
+Después del deploy, verificar que el sitio responda (`curl -I https://limpieza-y-desmalezado-de-terrenos.com.ar/`), que `/admin` redirija a login, y que el panel de Filament cargue sin errores.
+
+### Nota sobre archivos que existen en el servidor pero no en git
+
+Al adoptar `laravel/` como checkout git (agosto 2026) aparecieron varios archivos que corrían en producción sin estar versionados: `app/Console/Commands/GenerateSitemap.php` y cuatro migraciones de `posts` de marzo 2026. Git no los tocó (quedaron como untracked), pero conviene en algún momento agregarlos al repo para que dejen de ser una diferencia invisible entre server y código fuente.
 
 ### Variables de entorno específicas de producción
 
