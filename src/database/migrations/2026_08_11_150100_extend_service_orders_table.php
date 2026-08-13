@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -20,7 +21,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->change();
             $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
 
-            $table->foreignId('customer_id')->after('id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->nullable()->after('id')->constrained()->cascadeOnDelete();
             $table->foreignId('relevamiento_id')->nullable()->after('property_id')->constrained('relevamientos')->nullOnDelete();
             $table->string('flow_type')->default('con_relevamiento')->after('relevamiento_id');
             $table->string('category_other')->nullable()->after('category_id');
@@ -34,7 +35,19 @@ return new class extends Migration
             $table->json('payment_method_preference')->nullable()->after('budget_accepted_at');
         });
 
+        // Todo pedido existente tiene property_id (era NOT NULL) y toda
+        // property tiene customer_id (NOT NULL desde su creación), así que
+        // el backfill siempre puede resolver el customer_id de las filas
+        // ya existentes antes de exigir la columna como NOT NULL.
+        DB::statement(
+            'UPDATE service_orders so '.
+            'JOIN properties p ON p.id = so.property_id '.
+            'SET so.customer_id = p.customer_id '.
+            'WHERE so.customer_id IS NULL'
+        );
+
         Schema::table('service_orders', function (Blueprint $table) {
+            $table->foreignId('customer_id')->nullable(false)->change();
             $table->string('status')->default('visita_programada')->change();
             $table->date('work_date')->nullable()->change();
         });

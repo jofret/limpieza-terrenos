@@ -109,14 +109,15 @@ class WhatsAppCloudApiService
     /**
      * Valida la firma HMAC (X-Hub-Signature-256) que Meta manda en cada
      * webhook. Si todavía no se configuró el app secret se deja pasar sin
-     * validar, para no trabar el desarrollo.
+     * validar solo en local/testing (para no trabar el desarrollo); en
+     * cualquier otro entorno se rechaza el payload por seguridad.
      */
     public function verifySignature(string $payload, ?string $signatureHeader): bool
     {
         $appSecret = config('services.whatsapp_cloud_api.app_secret');
 
         if (blank($appSecret)) {
-            return true;
+            return app()->environment(['local', 'testing']);
         }
 
         if (blank($signatureHeader) || ! str_starts_with($signatureHeader, 'sha256=')) {
