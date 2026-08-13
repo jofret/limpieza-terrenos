@@ -32,7 +32,6 @@ yarn-error.log
 
 # Composer
 composer.phar
-composer.lock
 
 # NPM
 package-lock.json
