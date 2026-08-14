@@ -103,6 +103,14 @@ class Customer extends Model
     }
 
     /**
+     * Relación con órdenes de servicio
+     */
+    public function serviceOrders()
+    {
+        return $this->hasMany(ServiceOrder::class);
+    }
+
+    /**
      * Indica si corresponde ofrecer el botón de "Encuesta WhatsApp":
      * false si ya hay una encuesta respondida o publicada para este cliente.
      */
@@ -112,6 +120,17 @@ class Customer extends Model
             ->where(function ($query) {
                 $query->whereNotNull('answered_at')->orWhere('is_published', true);
             })
+            ->exists();
+    }
+
+    /**
+     * true si el cliente tiene al menos una Orden de Trabajo en estado
+     * "Completado" — condición para habilitar el botón de encuesta.
+     */
+    public function hasCompletedWorkOrder(): bool
+    {
+        return $this->serviceOrders()
+            ->whereHas('workOrder', fn ($query) => $query->where('status', 'completado'))
             ->exists();
     }
 

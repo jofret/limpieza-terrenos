@@ -219,6 +219,10 @@ class CustomerResource extends Resource
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->color('success')
                     ->visible(fn (Customer $record): bool => $record->canRequestTestimonial())
+                    ->disabled(fn (Customer $record): bool => ! $record->hasCompletedWorkOrder())
+                    ->tooltip(fn (Customer $record): ?string => $record->hasCompletedWorkOrder()
+                        ? null
+                        : 'El cliente necesita al menos una Orden de Trabajo en estado Completado')
                     ->requiresConfirmation()
                     ->modalHeading('Enviar encuesta por WhatsApp')
                     ->modalDescription('Se enviará un enlace al cliente para que complete su opinión. Los datos del cliente se precargarán automáticamente.')
