@@ -52,7 +52,13 @@ return [
         'api_version' => env('WHATSAPP_CLOUD_API_VERSION', 'v21.0'),
         'verify_token' => env('WHATSAPP_CLOUD_API_VERIFY_TOKEN'),
         'app_secret' => env('WHATSAPP_CLOUD_API_APP_SECRET'),
-        'default_site' => env('WHATSAPP_CLOUD_API_DEFAULT_SITE', 'limpieza-y-desmalezado-de-terrenos.com.ar'),
+    ],
+
+    // API central de Altoparque: Claudia crea/actualiza Customer,
+    // WhatsappConversation y WhatsappMessage acá en vez de en la base local.
+    'altoparque' => [
+        'api_url' => env('ALTOPARQUE_API_URL', 'https://altoparque.com/api'),
+        'api_token' => env('ALTOPARQUE_API_TOKEN'),
     ],
 
 ];

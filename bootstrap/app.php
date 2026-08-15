@@ -11,7 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Meta no manda token CSRF de Laravel al llamar al webhook de WhatsApp
+        // (ni tampoco el reenvío del hub de poda-de-altura-v2, que es un POST
+        // HTTP crudo sin sesión de Laravel).
+        $middleware->validateCsrfTokens(except: [
+            'webhook/whatsapp',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
