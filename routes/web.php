@@ -5,7 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\SurveyController;
+use App\Http\Controllers\MovedLinkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,17 +37,21 @@ Route::post('/contacto/enviar', [ContactController::class, 'send'])
     ->middleware(['honey', 'honey-recaptcha'])
     ->name('contacto.enviar');
 
-// Encuestas públicas
-Route::get('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'show'])->name('survey.show');
-Route::post('/encuesta/{token}', [App\Http\Controllers\SurveyController::class, 'store'])->name('survey.store');
-
-// Conformidad del cliente sobre el trabajo realizado
-Route::get('/conformidad/{token}', [App\Http\Controllers\PublicWorkOrderController::class, 'show'])->name('conformity.show');
-Route::post('/conformidad/{token}/confirmar', [App\Http\Controllers\PublicWorkOrderController::class, 'confirm'])->name('conformity.confirm');
-
-// Presupuesto público (revisión y aceptación por el cliente)
-Route::get('/presupuesto/{token}', [App\Http\Controllers\PublicBudgetController::class, 'show'])->name('budget.show');
-Route::post('/presupuesto/{token}/aceptar', [App\Http\Controllers\PublicBudgetController::class, 'accept'])->name('budget.accept');
+/*
+|--------------------------------------------------------------------------
+| Links viejos (encuesta/conformidad/presupuesto) — sistema mudado al panel
+| central de Altoparque
+|--------------------------------------------------------------------------
+| Estas rutas ya no tienen su controller/modelo real (ver borrado de
+| Survey/WorkOrder/ServiceOrder): quedan enlaces sueltos de WhatsApp/email
+| de antes de la migración. En vez de un 500, se muestra un aviso simple.
+*/
+Route::get('/encuesta/{token}', [MovedLinkController::class, 'show'])->name('survey.show');
+Route::post('/encuesta/{token}', [MovedLinkController::class, 'show'])->name('survey.store');
+Route::get('/conformidad/{token}', [MovedLinkController::class, 'show'])->name('conformity.show');
+Route::post('/conformidad/{token}/confirmar', [MovedLinkController::class, 'show'])->name('conformity.confirm');
+Route::get('/presupuesto/{token}', [MovedLinkController::class, 'show'])->name('budget.show');
+Route::post('/presupuesto/{token}/aceptar', [MovedLinkController::class, 'show'])->name('budget.accept');
 
 // Webhook de WhatsApp (Claudia)
 Route::get('/webhook/whatsapp', [App\Http\Controllers\WhatsAppWebhookController::class, 'verify'])->name('whatsapp.webhook.verify');
